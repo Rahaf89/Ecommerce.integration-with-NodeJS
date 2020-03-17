@@ -29,6 +29,28 @@ app.get("/customers/:customerId", function(req, res) {
     .catch(err => res.status(500).send(error));
 });
 
+app.post("/customers", (req, res) => {
+  const newCustomerName = req.body.name;
+  const newCustomerAddress = req.body.address;
+  const newCustomerCity = req.body.city;
+  const newCustomerCountry = req.body.country;
+
+  const query =
+    "INSERT INTO customers (name,address,city,country) VALUES ($1,$2,$3,$4)";
+
+  const params = [
+    newCustomerName,
+    newCustomerAddress,
+    newCustomerCity,
+    newCustomerCountry
+  ];
+
+  pool
+    .query(query, params)
+    .then(() => res.send("Customer Created!"))
+    .catch(e => res.status(500).send(e));
+});
+
 app.get("/suppliers", (req, res) => {
   pool.query("SELECT * FROM suppliers", (error, result) => {
     res.json(result.rows);
@@ -57,28 +79,6 @@ app.get("/products", function(req, res) {
     .query(query)
     .then(result => res.json(result.rows))
     .catch(err => res.status(500).send(error));
-});
-
-app.post("/customers", (req, res) => {
-  const newCustomerName = req.body.name;
-  const newCustomerAddress = req.body.address;
-  const newCustomerCity = req.body.city;
-  const newCustomerCountry = req.body.country;
-
-  const query =
-    "INSERT INTO customers (name,address,city,country) VALUES ($1,$2,$3,$4)";
-
-  const params = [
-    newCustomerName,
-    newCustomerAddress,
-    newCustomerCity,
-    newCustomerCountry
-  ];
-
-  pool
-    .query(query, params)
-    .then(() => res.send("Customer Created!"))
-    .catch(e => res.status(500).send(e));
 });
 
 app.post("/products", function(req, res) {
